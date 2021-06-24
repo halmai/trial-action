@@ -6,7 +6,7 @@ on:
       - opened
       - reopened
     branches:
-      - master
+      - main
   issue_comment:
     types: [created]
 
@@ -16,14 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "PR number is${{ github.event.number }}.
-      - run: echo "PR number is${{ github.event.issue.number }}.
+      - run: echo "PR number is${{ github.event.number }}."
+      - run: echo "PR number is${{ github.event.issue.number }}."
 
   auto_sync_vendor:
     if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'dependabot') }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "PR number is${{ github.event.number }}.
-      - run: echo "PR number is${{ github.event.issue.number }}.
+      - run: echo "PR number is${{ github.event.number }}."
+      - run: echo "PR number is${{ github.event.issue.number }}."
 
+  anyways:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "The job was automatically triggered by a [${{ github.event.comment }}] comment."
+      - run: echo "The job was automatically triggered by a [${{ github.event.comment.body }}] comment.body."
