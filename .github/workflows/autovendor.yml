@@ -1,0 +1,29 @@
+name: Vending Machine
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - master
+  issue_comment:
+    types: [created]
+
+jobs:
+  sync_vendor_by_comment:
+    if: ${{ github.event_name == 'issue_comment' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/make vendor') }}
+    runs-on: ubuntu-latest
+    steps: 
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "PR number is${{ github.event.number }}.
+      - run: echo "PR number is${{ github.event.issue.number }}.
+
+  auto_sync_vendor:
+    if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'dependabot') }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "PR number is${{ github.event.number }}.
+      - run: echo "PR number is${{ github.event.issue.number }}.
+
