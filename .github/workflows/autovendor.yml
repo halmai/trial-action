@@ -6,7 +6,7 @@ on:
       - opened
       - reopened
     branches:
-      - master
+      - main
   issue_comment:
     types: [created]
 
