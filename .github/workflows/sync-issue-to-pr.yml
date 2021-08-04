@@ -45,5 +45,5 @@ jobs:
                   $GITHUB_API_URL/projects/columns/cards/$issueNumber/moves
                   -d '{"position":"bottom", "column_id": 1}';
           done;
-          echo "last issueNumber:" $issueNumber
+          echo "last issueNumber:" $issueNumber;
 			
