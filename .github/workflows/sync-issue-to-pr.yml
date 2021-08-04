@@ -45,9 +45,11 @@ jobs:
         run: |
               isDraft=`cat /tmp/isDraft.txt`
               if [[ "$isDraft" == "true" ]]; then
+                echo "Moving from draft to non-draft"
                 export sourceColumnID=$COLUMN_ID_OF_REVIEW
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
               else
+                echo "Moving from non-draft to draft"
                 export sourceColumnID=$COLUMN_ID_OF_REVIEW
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
               fi;
