@@ -45,6 +45,14 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/halmai/trial-action/issues/11
+      - name: debug2f
+        run: |
+              curl \
+                  -X POST \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/projects/columns/cards/66220864/moves
+                  -d '{"position":"bottom", "column_id": 15408997}';
       - name: debug3
         # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
         run: |
