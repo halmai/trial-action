@@ -1,0 +1,14 @@
+name: Issue Mover
+on:
+  pull_request:
+    types: ["ready_for_review", "converted_to_draft"]
+
+jobs:
+  issues:
+    runs-on: ["ubuntu"]
+    steps:
+      - name: debug1
+        run: echo "itten foo"
+      - name: debug2
+        run: echo ${{github.event}}
+
