@@ -14,7 +14,6 @@ jobs:
           echo "na ${{ github.event.pull_request.body }} na"
       - name: debug3
         run: |
-          # echo "${{ github.event.pull_request.body }}" | grep "Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]"
           echo "na ${{ github.event }} na"
           echo "na ${{ github.event.pull_request }} na"
           echo "na ${{ github.event.pull_request.body }} na"
