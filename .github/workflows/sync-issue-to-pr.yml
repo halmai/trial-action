@@ -33,6 +33,12 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/13012631/columns
+      - name: debug2d
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/projects/columns/15408994/cards
       - name: debug3
         # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
         run: |
