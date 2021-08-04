@@ -43,7 +43,7 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/columns/cards/$issueNumber/moves
-                  -d '{"position":"bottom", "column_id": 1}';
+                  -d '{"position":"bottom", "column_id": 15408997}';
           done;
           echo "last issueNumber:" $issueNumber;
 
