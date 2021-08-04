@@ -28,6 +28,12 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
+      - name: debug2b - get PR
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }}
       - name: debug2c - get columns of project
         run: |
               curl \
