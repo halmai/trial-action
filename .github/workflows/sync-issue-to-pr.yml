@@ -6,6 +6,9 @@ on:
 jobs:
   issues:
     runs-on: ["ubuntu-latest"]
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: debug2
         run: |
