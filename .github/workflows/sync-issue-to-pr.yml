@@ -22,35 +22,33 @@ jobs:
           echo "na ${{ github.event.pull_request.body }} na"
           echo "EN" ${{ github.event_name }} "EN"
           echo "ET" ${{ github.event.type }} "ET"
-      - name: debug2a - get list of projects
+      - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
-      - name: debug2b - get PR
-        run: |
-              export isDraft=$(curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
-              echo "isDraft:" $isDraft 
-              echo $isDraft > /tmp/isDraft.txt
-      - name: debug2c - get columns of project (needed only once, for setting the columne iDs)
+
+      - name: debug2c - get columns of project (needed only once, for setting the column IDs)
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns
-      - name: debug2d1 - get cards in one column
+
+      - name: debug2b - get cards of the "Review" or "In-progress" columns 
         run: |
-              isDraft=`cat /tmp/isDraft.txt`
+              export isDraft=$(curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
+              echo "isDraft:" $isDraft;
               if [[ "$isDraft" == "true" ]]; then
-                echo "Moving from draft to non-draft"
+                echo "Moving from non-draft to draft"
                 export sourceColumnID=$COLUMN_ID_OF_REVIEW
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
               else
-                echo "Moving from non-draft to draft"
+                echo "Moving from draft to non-draft"
                 export sourceColumnID=$COLUMN_ID_OF_REVIEW
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
               fi;
@@ -58,12 +56,6 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/columns/$sourceColumnID/cards
-      - name: debug2e - this step is not needed
-        run: |
-              curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER
       - name: debug2f - move card
         run: |
               curl \
@@ -86,3 +78,9 @@ jobs:
           done;
           echo "last issueNumber:" $issueNumber;
 
+      - name: debug2e - this step is not needed
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER
