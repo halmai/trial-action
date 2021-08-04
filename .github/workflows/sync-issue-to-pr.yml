@@ -46,4 +46,4 @@ jobs:
                   -d '{"position":"bottom", "column_id": 1}';
           done;
           echo "last issueNumber:" $issueNumber;
-			
+
