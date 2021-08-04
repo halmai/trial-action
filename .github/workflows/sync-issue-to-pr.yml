@@ -5,7 +5,7 @@ on:
 
 jobs:
   issues:
-    runs-on: ["ubuntu"]
+    runs-on: ["ubuntu-latest"]
     steps:
       - name: debug1
         run: echo "itten foo"
