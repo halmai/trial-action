@@ -34,6 +34,7 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
+              echo "isDraft:" $isDraft 
               echo $isDraft > /tmp/isDraft.txt
       - name: debug2c - get columns of project (needed only once, for setting the columne iDs)
         run: |
