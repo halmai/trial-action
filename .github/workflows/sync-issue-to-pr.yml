@@ -34,29 +34,28 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
-              echo "isDraft" $isDraft > /tmp/isDraft.txt
-              echo "isDraft" $isDraft
-      - name: debug2c - get columns of project
+              echo $isDraft > /tmp/isDraft.txt
+      - name: debug2c - get columns of project (needed only once, for setting the columne iDs)
         run: |
-              isDraft=`cat /tmp/isDraft.txt`
-              echo "isDraft" $isDraft;
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns
       - name: debug2d1 - get cards in one column
         run: |
+              isDraft=`cat /tmp/isDraft.txt`
+              if [[ "$isDraft" == "true" ]]; then
+                export sourceColumnID=$COLUMN_ID_OF_REVIEW
+                export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
+              else
+                export sourceColumnID=$COLUMN_ID_OF_REVIEW
+                export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
+              fi;
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/columns/$COLUMN_ID_OF_IN_PROGRESS/cards
-      - name: debug2d2 - get cards in other column
-        run: |
-              curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/columns/$COLUMN_ID_OF_REVIEW/cards
-      - name: debug2e 
+                  $GITHUB_API_URL/projects/columns/$sourceColumnID/cards
+      - name: debug2e - this step is not needed
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
