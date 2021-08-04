@@ -10,7 +10,8 @@ jobs:
       - name: debug1
         run: echo "itten foo"
       - name: debug2
-        run: echo "na ${{ github.event }} na"
-        run: echo "na ${{ github.event.pull_request }} na"
-        run: echo "na ${{ github.event.pull_request.body }} na"
+        run: |
+          echo "na ${{ github.event }} na"
+          echo "na ${{ github.event.pull_request }} na"
+          echo "na ${{ github.event.pull_request.body }} na"
 
