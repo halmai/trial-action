@@ -21,37 +21,38 @@ jobs:
           echo "na ${{ github.event.pull_request }} na"
           echo "na ${{ github.event.pull_request.body }} na"
           echo "EN" ${{ github.event_name }} "EN"
-      - name: debug2a
+          echo "ET" ${{ github.event.type }} "ET"
+      - name: debug2a - get list of projects
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
-      - name: debug2c
+      - name: debug2c - get columns of project
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns
-      - name: debug2d1
+      - name: debug2d1 - get cards in one column
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/columns/$COLUMN_ID_OF_IN_PROGRESS/cards
-      - name: debug2d2
+      - name: debug2d2 - get cards in other column
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/columns/$COLUMN_ID_OF_REVIEW/cards
-      - name: debug2e
+      - name: debug2e 
         run: |
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER
-      - name: debug2f
+      - name: debug2f - move card
         run: |
               curl \
                   -X POST \
