@@ -10,14 +10,40 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: debug2
+      - name: debug1
         run: |
           echo "na ${{ github.event }} na"
           echo "na ${{ github.event.pull_request }} na"
           echo "na ${{ github.event.pull_request.body }} na"
+      - name: debug2a
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/halmai/trial-action/projects
+      - name: debug2b
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/users/halmai/projects
+      - name: debug2c
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/projects/{project_id}/columns
       - name: debug3
+        # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
         run: |
           for issueNumber in `echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`; do
               echo "issueNumber:" $issueNumber;
+              curl \
+                  -X POST \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/projects/columns/cards/$issueNumber/moves
+                  -d '{"position":"bottom", "column_id": 1}';
           done;
-
+          echo "last issueNumber:" $issueNumber
+			
