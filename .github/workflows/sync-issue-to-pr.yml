@@ -49,8 +49,8 @@ jobs:
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
               else
                 echo "Moving from draft to non-draft"
-                export sourceColumnID=$COLUMN_ID_OF_REVIEW
-                export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
+                export sourceColumnID=$COLUMN_ID_OF_IN_PROGRESS
+                export targetColumnID=$COLUMN_ID_OF_REVIEW
               fi;
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
