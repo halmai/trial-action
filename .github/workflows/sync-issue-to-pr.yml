@@ -17,15 +17,15 @@ jobs:
           echo "na ${{ github.event.pull_request.body }} na"
       - name: debug3
         run: |
-          echo "na ${{ github.event }} na"
-          echo "na ${{ github.event.pull_request }} na"
-          echo "na ${{ github.event.pull_request.body }} na"
-          echo -e "na ${{ github.event.pull_request.body }} na"
-          echo -e "${{ github.event.pull_request.body }}"
-          echo -e "X${{ github.event.pull_request.body }}X"
-          echo -e "${{ github.event.pull_request.body }}" | grep -E "^Fixes"
-          echo -e "sd\nFixes #23, ###  #45 \nFixes #22\ncv" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "
-          for issueNumber in `echo -e "sd\nFixes #23, ###  #45 \nFixes #22\ncv" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`; do
+          # echo "na ${{ github.event }} na"
+          # echo "na ${{ github.event.pull_request }} na"
+          # echo "na ${{ github.event.pull_request.body }} na"
+          # echo -e "na ${{ github.event.pull_request.body }} na"
+          # echo -e "${{ github.event.pull_request.body }}"
+          # echo -e "X${{ github.event.pull_request.body }}X"
+          # echo -e "${{ github.event.pull_request.body }}" | grep -E "^Fixes"
+          # echo -e "sd\nFixes #23, ###  #45 \nFixes #22\ncv" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "
+          for issueNumber in `echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`; do
               echo "issueNumber:" $issueNumber;
           done;
 
