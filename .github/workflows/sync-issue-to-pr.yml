@@ -32,12 +32,14 @@ jobs:
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
       - name: debug2b - get PR
         run: |
-              curl \
+              export isDraft=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft"
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
+              echo "isDraft" $isDraft
       - name: debug2c - get columns of project
         run: |
+              echo "isDraft" $isDraft;
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
