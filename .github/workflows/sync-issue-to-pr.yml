@@ -22,6 +22,7 @@ jobs:
               
               if [[ "$cardNumbers" == "" ]]; then 
                   echo "The PR body has no card mnetioned in its Fixes: line. No card to moved. Done."              
+                  exit 0
               fi;
               
               # figure out the GitHub ProjectID
