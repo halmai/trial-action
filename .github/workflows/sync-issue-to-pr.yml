@@ -54,7 +54,12 @@ jobs:
 
               # figure out which ticket numbers to move
               # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
-              for issueNumber in `echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`; do
+              
+              export ticketNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
+              
+              echo "ticketNumbers:" $ticketNumbers
+              
+              for issueNumber in $ticketNumbers; do
                   echo "issueNumber:" $issueNumber;
 
                   export cardID=$(curl \
