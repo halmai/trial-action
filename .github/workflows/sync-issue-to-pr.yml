@@ -56,17 +56,18 @@ jobs:
         run: |
               if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
                 echo "Moving from non-draft to draft"
-                export sourceColumnID=$COLUMN_ID_OF_REVIEW
-                export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
+                export sourceColumnID=$columnIDForNonDraftPRs
+                export targetColumnID=$columnIDForDraftPRs
               else
                 echo "Moving from draft to non-draft"
-                export sourceColumnID=$COLUMN_ID_OF_IN_PROGRESS
-                export targetColumnID=$COLUMN_ID_OF_REVIEW
+                export sourceColumnID=$columnIDForDraftPRs
+                export targetColumnID=$columnIDForNonDraftPRs
               fi;
+              export ticketNumber=11
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/columns/$sourceColumnID/cards
+                  $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.name|endswith("'$ticketNumber'"))'
       - name: debug2f - move card
         run: |
               curl \
