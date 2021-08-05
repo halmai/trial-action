@@ -25,29 +25,29 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "'$PROJECT_NAME'") | .id')
-              echo "GitHub ProjectID:" $projectID
+              echo "GitHub ProjectID: "$projectID
 
               # figure out the columnID for the draft PRs
               export columnIDForDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_DRAFT_PRS'") | .id')
-              echo "ColumnID for Draft PRs:" $columnIDForDraftPRs
+              echo "ColumnID for Draft PRs: "$columnIDForDraftPRs
 
               # figure out the columnID for the non-draft PRs
               export columnIDForNonDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
-              echo "ColumnID for Non-Draft PRs:" $columnIDForNonDraftPRs
+              echo "ColumnID for Non-Draft PRs: "$columnIDForNonDraftPRs
               
               # figure out which column to move from and which to
               if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
-                echo "Moving from non-draft to draft"
+                echo "Moving from non-draft to draft."
                 export sourceColumnID=$columnIDForNonDraftPRs
                 export targetColumnID=$columnIDForDraftPRs
               else
-                echo "Moving from draft to non-draft"
+                echo "Moving from draft to non-draft."
                 export sourceColumnID=$columnIDForDraftPRs
                 export targetColumnID=$columnIDForNonDraftPRs
               fi;
@@ -57,27 +57,27 @@ jobs:
               
               export ticketNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
               
-              echo "ticketNumbers:" $ticketNumbers
+              echo "List of ticketNumbers: "$ticketNumbers
               
               for issueNumber in $ticketNumbers; do
-                  echo "issueNumber:" $issueNumber;
+                  echo -n "issueNumber: "$issueNumber", ";
 
                   export cardID=$(curl -s \
                       -H "Accept: application/vnd.github.inertia-preview+json" \
                       -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                       $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$issueNumber'")) | .id')
-                  echo "cardID to move:" $cardID
 
                   if [[ -z "$cardID" ]]; then
-                      echo "Card is not in the column:" $cardID
+                      echo "Card is "$cardID" is not in the column "$sourceColumnID", not moving." 
                   else
-                      echo "Moving card:" $cardID "to column" $targetColumnID
+                      echo -n "Card is "$cardID" is in the column "$sourceColumnID", moving... " 
                       curl -s \
                           -X POST \
                           -H "Accept: application/vnd.github.inertia-preview+json" \
                           -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           $GITHUB_API_URL/projects/columns/cards/$cardID/moves \
-                          -d '{"position":"bottom", "column_id": '$targetColumnID'}';
+                          -d '{"position":"bottom", "column_id": '$targetColumnID'}' >/dev/null;
+                      echo "Moved."
                   fi;
               done;
               
