@@ -26,11 +26,11 @@ jobs:
           echo "EA" ${{ github.event.action }} "EA"
       - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
-              curl \
+              export projectID=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "trial-action") | .id'
-
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "trial-action") | .id')
+              echo "ProjectID:" $projectID
       - name: debug2c - get columns of project (needed only once, for setting the column IDs)
         run: |
               curl \
