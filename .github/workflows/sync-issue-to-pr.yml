@@ -22,6 +22,7 @@ jobs:
           echo "na ${{ github.event.pull_request.body }} na"
           echo "EN" ${{ github.event_name }} "EN"
           echo "ET" ${{ github.event.type }} "ET"
+          echo "EA" ${{ github.event.action }} "EA"
       - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
               curl \
