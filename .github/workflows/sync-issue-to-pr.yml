@@ -76,7 +76,7 @@ jobs:
                   fi;
               done;
               
-              if [[ ! -z $issueNumber ]]; then
+              if [[ -z $issueNumber ]]; then
                   echo "The PR body has no card mnetioned in its Fixes: line, so no card has been moved."              
               fi
 
