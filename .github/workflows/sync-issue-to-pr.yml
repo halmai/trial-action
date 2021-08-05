@@ -16,6 +16,15 @@ jobs:
     steps:
       - name: "Move all the cards that are listed in PR's line that contains \"Fixed: #<card_number_1>, ..., #<card_number_N>\""
         run: |
+              export cardNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
+              
+              echo "List of cardNumbers: "$cardNumbers
+              
+              if [[ -z $cardNumbers ]]; then 
+                  echo "The PR body has no card mnetioned in its Fixes: line. No card to moved. Done."              
+                  exit(0)
+              fi
+              
               # figure out the GitHub ProjectID
               export projectID=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
@@ -55,10 +64,6 @@ jobs:
               # figure out which ticket numbers to move
               # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
               
-              export cardNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
-              
-              echo "List of cardNumbers: "$cardNumbers
-              
               for cardNumber in $cardNumbers; do
                   echo -n "cardNumber: "$cardNumber", ";
 
@@ -68,20 +73,17 @@ jobs:
                       $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$cardNumber'")) | .id')
 
                   if [[ -z "$cardID" ]]; then
-                      echo "has no card in the column \"$sourceColumnName\" (#$sourceColumnID), not moving." 
+                      echo "card not found in the column \"$sourceColumnName\" (#$sourceColumnID), not moving." 
                   else
-                      echo -n "Card "$cardID" is in the column \"$sourceColumnName\" (#$sourceColumnID), moving... " 
+                      echo -n "cardId: "$cardID", moving \"$sourceColumnName\" -> \"$targetColumnName\" (#$sourceColumnID -> #$targetColumnID)... " 
                       curl -s \
                           -X POST \
                           -H "Accept: application/vnd.github.inertia-preview+json" \
                           -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                           $GITHUB_API_URL/projects/columns/cards/$cardID/moves \
                           -d '{"position":"bottom", "column_id": '$targetColumnID'}' >/dev/null;
-                      echo "Moved to column \"$targetColumnName\" (#$targetColumnID)."
+                      echo "Moved."
                   fi;
               done;
               
-              if [[ -z $cardNumber ]]; then
-                  echo "The PR body has no card mnetioned in its Fixes: line, so no card has been moved."              
-              fi
 
