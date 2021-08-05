@@ -1,4 +1,15 @@
 name: Issue Mover
+
+# Author: Csongor Halmai
+#
+# This GitHub workflow moves cards between two columns.
+# If a PR is changing from draft to non-draft then it moves cards from $COLUMN_NAME_OF_DRAFT_PRS to 
+# $COLUMN_NAME_OF_NON_DRAFT_PRS, otherwise the opposite direction.
+# You can specify in the body of the PR which cards to move. Add this line to the PR body:
+# Fixes: #1, #22, #456, #1204
+# If the listed card is not in the draft/non-draft column it should be moved from then the card is not moved.
+
+
 on:
   pull_request:
     types: ["ready_for_review", "converted_to_draft"]
