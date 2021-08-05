@@ -32,7 +32,7 @@ jobs:
               export projectID=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "$PROJECT_NAME") | .id')
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "${{ PROJECT_NAME }}") | .id')
               echo "GitHub ProjectID:" $projectID
       - name: debug2c - get columns of project (needed only once, for setting the column IDs)
         run: |
