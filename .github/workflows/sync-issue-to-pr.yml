@@ -28,14 +28,14 @@ jobs:
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$projectID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_DRAFT_PRS'") | .id')
-              echo "ColumnID for Draft PRs: "$columnIDForDraftPRs
+              echo "ColumnID for Draft PRs (\"$COLUMN_NAME_OF_DRAFT_PRS\"): "$columnIDForDraftPRs
 
               # figure out the columnID for the non-draft PRs
               export columnIDForNonDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$projectID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
-              echo "ColumnID for Non-Draft PRs: "$columnIDForNonDraftPRs
+              echo "ColumnID for Non-Draft PRs (\"$COLUMN_NAME_OF_NON_DRAFT_PRS\"): "$columnIDForNonDraftPRs
               
               # figure out which column to move from and which to
               if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
