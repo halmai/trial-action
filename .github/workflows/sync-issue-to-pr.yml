@@ -22,20 +22,6 @@ jobs:
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "'$PROJECT_NAME'") | .id')
               echo "GitHub ProjectID for project \"$PROJECT_NAME\"": "$projectID
-
-              # figure out the columnID for the draft PRs
-              export columnIDForDraftPRs=$(curl -s \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/$projectID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_DRAFT_PRS'") | .id')
-              echo "ColumnID for Draft PRs: "$columnIDForDraftPRs
-
-              # figure out the columnID for the non-draft PRs
-              export columnIDForNonDraftPRs=$(curl -s \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/$projectID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
-              echo "ColumnID for Non-Draft PRs: "$columnIDForNonDraftPRs
               
               if [[ -z $cardNumber ]]; then
                   echo "The PR body has no card mnetioned in its Fixes: line, so no card has been moved."              
