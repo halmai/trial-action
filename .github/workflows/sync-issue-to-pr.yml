@@ -14,7 +14,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: Move all the cards that are listed in PR's line that contains "Fixed: #<card_number_1>, ..., #<card_number_N>"
+      - name: "Move all the cards that are listed in PR's line that contains \"Fixed: #<card_number_1>, ..., #<card_number_N>\""
         run: |
               # figure out the GitHub ProjectID
               export projectID=$(curl -s \
