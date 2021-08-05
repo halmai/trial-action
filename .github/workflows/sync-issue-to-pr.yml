@@ -45,15 +45,7 @@ jobs:
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
               echo "ColumnID for Non-Draft PRs:" $columnIDForNonDraftPRs
-      - name: debug2c - get columns of project (needed only once, for setting the column IDs)
-        run: |
-              curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/$PROJECT_ID/columns
-
-      - name: debug2b - get cards of the "Review" or "In-progress" columns 
-        run: |
+              
               if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
                 echo "Moving from non-draft to draft"
                 export sourceColumnID=$columnIDForNonDraftPRs
@@ -89,6 +81,13 @@ jobs:
                   -d '{"position":"bottom", "column_id": 15408997}';
           done;
           echo "last issueNumber:" $issueNumber;
+
+      - name: debug2c - get columns of project (needed only once, for setting the column IDs)
+        run: |
+              curl \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/projects/$PROJECT_ID/columns
 
       - name: debug2e - this step is not needed
         run: |
