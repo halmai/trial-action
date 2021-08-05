@@ -28,6 +28,7 @@ jobs:
         run: |
               export projectName=$PROJECT_NAME
               echo "ProjectName:" $projectName
+              echo "ProjectName:" $PROJECT_NAME
               export projectID=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
