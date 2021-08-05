@@ -18,34 +18,30 @@ jobs:
       run:
         shell: bash
     steps:
-      - name: debug1
-        run: |
-          echo "na ${{ github.event }} na"
-          echo "na ${{ github.event.pull_request }} na"
-          echo "na ${{ github.event.pull_request.body }} na"
-          echo "EN" ${{ github.event_name }} "EN"
-          echo "ET" ${{ github.event.type }} "ET"
-          echo "EA" ${{ github.event.action }} "EA"
       - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
+              # figure out the GitHub ProjectID
               export projectID=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "'$PROJECT_NAME'") | .id')
               echo "GitHub ProjectID:" $projectID
 
+              # figure out the columnID for the draft PRs
               export columnIDForDraftPRs=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_DRAFT_PRS'") | .id')
               echo "ColumnID for Draft PRs:" $columnIDForDraftPRs
 
+              # figure out the columnID for the non-draft PRs
               export columnIDForNonDraftPRs=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
               echo "ColumnID for Non-Draft PRs:" $columnIDForNonDraftPRs
               
+              # figure out which column to move from and which to
               if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
                 echo "Moving from non-draft to draft"
                 export sourceColumnID=$columnIDForNonDraftPRs
@@ -56,25 +52,28 @@ jobs:
                 export targetColumnID=$columnIDForNonDraftPRs
               fi;
 
-              export ticketNumber=11
+              # figure out which ticket numbers to move
+              # grab the first line that starts with "Fixes", collect the ticket numbers from the line and move those tickets into their column.
+              for issueNumber in `echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`; do
+                  echo "issueNumber:" $issueNumber;
 
-              export cardID=$(curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$ticketNumber'")) | .id')
-              echo "cardID to move:" $cardID
-
-              if [[ ! -z "$cardID" ]]; then
-                  echo "Moving card:" $cardID
-                  echo "Moving card:" $cardID x ''/$targetColumnID/''
-                  curl \
-                      -X POST \
+                  export cardID=$(curl \
                       -H "Accept: application/vnd.github.inertia-preview+json" \
                       -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                      $GITHUB_API_URL/projects/columns/cards/$cardID/moves \
-                      -d '{"position":"bottom", "column_id": '$targetColumnID'}';
-              fi;
+                      $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$issueNumber'")) | .id')
+                  echo "cardID to move:" $cardID
 
-
-
+                  if [[ -z "$cardID" ]]; then
+                      echo "Card is not in the column:" $cardID
+                  else
+                      echo "Moving card:" $cardID "to column" $targetColumnID
+                      curl \
+                          -X POST \
+                          -H "Accept: application/vnd.github.inertia-preview+json" \
+                          -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                          $GITHUB_API_URL/projects/columns/cards/$cardID/moves \
+                          -d '{"position":"bottom", "column_id": '$targetColumnID'}';
+                  fi;
+              done;
+              echo "last issueNumber:" $issueNumber;
 
