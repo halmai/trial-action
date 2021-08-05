@@ -20,10 +20,6 @@ jobs:
               
               echo "List of cardNumbers: "$cardNumbers
               
-              if [[ -z $cardNumbers ]]; then 
-                  echo "The PR body has no card mnetioned in its Fixes: line. No card to moved. Done."              
-                  exit(0)
-              fi
               
               # figure out the GitHub ProjectID
               export projectID=$(curl -s \
