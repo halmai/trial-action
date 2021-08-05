@@ -21,21 +21,21 @@ jobs:
       - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
               # figure out the GitHub ProjectID
-              export projectID=$(curl \
+              export projectID=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "'$PROJECT_NAME'") | .id')
               echo "GitHub ProjectID:" $projectID
 
               # figure out the columnID for the draft PRs
-              export columnIDForDraftPRs=$(curl \
+              export columnIDForDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_DRAFT_PRS'") | .id')
               echo "ColumnID for Draft PRs:" $columnIDForDraftPRs
 
               # figure out the columnID for the non-draft PRs
-              export columnIDForNonDraftPRs=$(curl \
+              export columnIDForNonDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/projects/$PROJECT_ID/columns | jq '.[] | select(.name == "'$COLUMN_NAME_OF_NON_DRAFT_PRS'") | .id')
@@ -62,7 +62,7 @@ jobs:
               for issueNumber in $ticketNumbers; do
                   echo "issueNumber:" $issueNumber;
 
-                  export cardID=$(curl \
+                  export cardID=$(curl -s \
                       -H "Accept: application/vnd.github.inertia-preview+json" \
                       -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                       $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$issueNumber'")) | .id')
@@ -72,7 +72,7 @@ jobs:
                       echo "Card is not in the column:" $cardID
                   else
                       echo "Moving card:" $cardID "to column" $targetColumnID
-                      curl \
+                      curl -s \
                           -X POST \
                           -H "Accept: application/vnd.github.inertia-preview+json" \
                           -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
