@@ -27,7 +27,7 @@ jobs:
               curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }}
         
               export cardNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
               
