@@ -9,9 +9,6 @@ jobs:
     env:
       PROJECT_ID: 13012631
       PROJECT_NAME: "trial-action"
-      COLUMN_ID_OF_IN_PROGRESS: 15408994
-      COLUMN_ID_OF_REVIEW: 15408997
-      ISSUE_NUMBER: 11
       COLUMN_NAME_OF_DRAFT_PRS: "egyik"
       COLUMN_NAME_OF_NON_DRAFT_PRS: "masik"
     defaults:
@@ -68,7 +65,7 @@ jobs:
                       $GITHUB_API_URL/projects/columns/$sourceColumnID/cards | jq '.[] | select(.content_url|endswith("/'$issueNumber'")) | .id')
 
                   if [[ -z "$cardID" ]]; then
-                      echo "Card is "$cardID" is not in the column "$sourceColumnID", not moving." 
+                      echo "has no card, in the column "$sourceColumnID", not moving." 
                   else
                       echo -n "Card is "$cardID" is in the column "$sourceColumnID", moving... " 
                       curl -s \
