@@ -27,8 +27,8 @@ jobs:
       - name: debug2a - get list of projects (needed only once, for setting the project ID)
         run: |
               export projectName=$PROJECT_NAME
-              echo "ProjectName:" $projectName
-              echo "ProjectName:" $PROJECT_NAME
+              echo "ProjectName 1:" $projectName
+              echo "ProjectName 2:" $PROJECT_NAME
               export projectID=$(curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
