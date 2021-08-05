@@ -8,6 +8,7 @@ jobs:
     runs-on: ["ubuntu-latest"]
     env:
       PROJECT_ID: 13012631
+      PROJECT_NAME: "trial-action"
       COLUMN_ID_OF_IN_PROGRESS: 15408994
       COLUMN_ID_OF_REVIEW: 15408997
       ISSUE_NUMBER: 11
@@ -15,8 +16,6 @@ jobs:
       run:
         shell: bash
     steps:
-      - run: echo "event name is:" ${{ github.event_name }} 
-      - run: echo "event type is:" ${{ github.event.action }} 
       - name: debug1
         run: |
           echo "na ${{ github.event }} na"
@@ -30,7 +29,7 @@ jobs:
               curl \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "$PROJECT_NAME") | .id'
 
       - name: debug2c - get columns of project (needed only once, for setting the column IDs)
         run: |
@@ -41,12 +40,7 @@ jobs:
 
       - name: debug2b - get cards of the "Review" or "In-progress" columns 
         run: |
-              export isDraft=$(curl \
-                  -H "Accept: application/vnd.github.inertia-preview+json" \
-                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }} | jq ".draft");
-              echo "isDraft:" $isDraft;
-              if [[ "$isDraft" == "true" ]]; then
+              if [[ "${{ github.event.action }}" == "converted_to_draft" ]]; then
                 echo "Moving from non-draft to draft"
                 export sourceColumnID=$COLUMN_ID_OF_REVIEW
                 export targetColumnID=$COLUMN_ID_OF_IN_PROGRESS
