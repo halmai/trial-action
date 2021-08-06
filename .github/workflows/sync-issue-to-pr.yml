@@ -24,6 +24,9 @@ jobs:
     steps:
       - name: "Move all the cards that are listed in PR's line that contains \"Fixed: #<card_number_1>, ..., #<card_number_N>\""
         run: |
+              echo "PRI-1-"${{ github.event.pull_request.issue }}
+              echo "PRI-2-"${{ github.event.pull_request.pull_request.issue }}
+
               curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
