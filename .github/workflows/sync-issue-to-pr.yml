@@ -32,6 +32,17 @@ jobs:
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/${{ github.event.number }}
         
+              curl -s \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/11
+
+              curl -s \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/66220864
+
+
               export cardNumbers=`echo "${{ github.event.pull_request.body }}" | grep -E "^Fixes" | head -n 1 | tr -d -C "0123456789#" | tr "#" "\n" | grep -E "[0-9]" | tr "\n" " "`
               
               echo "List of cardNumbers: "$cardNumbers
