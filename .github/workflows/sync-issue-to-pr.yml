@@ -18,7 +18,7 @@ jobs:
   issues:
     runs-on: ["ubuntu-latest"]
     env:
-      PROJECT_NAME: "trial-action"
+      PROJECT_NAME: "trial-action-x"
       COLUMN_NAME_OF_DRAFT_PRS: "egyik"
       COLUMN_NAME_OF_NON_DRAFT_PRS: "masik"
     steps:
@@ -61,7 +61,12 @@ jobs:
                   $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects | jq '.[] | select(.name == "'$PROJECT_NAME'") | .id')
               echo "GitHub ProjectID for project \"$PROJECT_NAME\": "$projectID
 
-              # figure out the columnID for the draft PRs
+
+              if [[ -z "$projectID" ]]; then
+                  echo "ProjectID cannot be found."
+                  exit 1
+              fi;
+                            # figure out the columnID for the draft PRs
               export columnIDForDraftPRs=$(curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
                   -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
