@@ -18,7 +18,7 @@ jobs:
   issues:
     runs-on: ["ubuntu-latest"]
     env:
-      PROJECT_NAME: "trial-action-x"
+      PROJECT_NAME: "trial-action"
       COLUMN_NAME_OF_DRAFT_PRS: "egyik"
       COLUMN_NAME_OF_NON_DRAFT_PRS: "masik"
     steps:
@@ -28,6 +28,11 @@ jobs:
               echo "PRI-1-"${{ github.event.pull_request.issue }}
               echo "PRI-2-"${{ github.event.pull_request.pull_request.issue }}
               echo "PRI-1-"${{ github.event.issue }}
+
+              curl -s \
+                  -H "Accept: application/vnd.github.inertia-preview+json" \
+                  -H "authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                  $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/projects
 
               curl -s \
                   -H "Accept: application/vnd.github.inertia-preview+json" \
